@@ -1,5 +1,7 @@
 import { Formik, Form, Field, ErrorMessage, useField } from 'formik';
 import * as Yup from 'yup'
+import FieldOption from './FieldForm'
+import { useState } from 'react';
 
 
 const MyTextInput = ({label, ...props}) => {
@@ -35,28 +37,15 @@ const MyTextInput2 = ({children, ...props}) => {
     )
 }   
 
-const MyTextInput3 = ({id, as, name, ...props}) => {
-    const [field, meta] = useField({id, as, name});
+const MyTextInput3 = ({label, someCurrency, ...props}) => {
+    console.log(someCurrency)
+    return <Field
+       {...props}>
+                 <option value="">{label}</option>
+                {someCurrency.map((item, id) => <FieldOption key={id} value={item}/>)}
+          </Field>
 
-    console.log(Object.values(props))
-
-    let currencyArray = [Object.values(props)]
-
-    return(
-        <>
-            <Field
-                id="currency"
-                as='select'
-                name="currency">
-
-             {currencyArray.map(el => (<option value ={el}>{el} </option>))}
-        
-            </Field>
-            {meta.touched && meta.error ?  (<div className='error'>{meta.error}</div>) : null}
-        </>
-    )
 }   
-
 
 const Form1 = () => {
     return (
@@ -73,7 +62,7 @@ const Form1 = () => {
         validationSchema={Yup.object({
             name: Yup.string().min(2, 'min 2 character').required('Required'),
             email: Yup.string().email('invalid email adress').required('Required'),
-            amount: Yup.string().min(5, 'min 5 character').required('Required'),
+            amount: Yup.string().min(3, 'min 3 character').required('Required'),
             currency: Yup.string().required('Required'),
             text: Yup.string().min(10, 'min 10 character'),
             terms: Yup.boolean().required().oneOf([true], 'Required')
@@ -83,6 +72,7 @@ const Form1 = () => {
         <Form className="form">
             <h2>Отправить пожертвование</h2>
              <MyTextInput 
+                onChange={(e) => console.log(e.target.value)}
                 label='Ваше имя'
                 id="name"
                 name="name"
@@ -113,13 +103,13 @@ const Form1 = () => {
             </Field>
             <ErrorMessage component="div" name="currency"/>
 
-            <MyTextInput3  
-               id="currency"
-               as='select'
-               name="currency"
-               currencyArray={'RUB, USD'}
-               >
-
+            <MyTextInput3 
+                label='Выберите валюту' 
+                someCurrency={['RUB', 'USD', 'EUR']}
+                 id="currency"
+                 value={''}
+                 as='select'
+                 name="currency">
             </MyTextInput3>
 
             <label htmlFor="text">Ваше сообщение</label>
